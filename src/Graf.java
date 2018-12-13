@@ -1,11 +1,11 @@
 import java.util.*;
 
 //
-//Podejście węzłowe znacznie obniża koszt algorytmu. System nie musi pamiętać
-//        wartości śladu fermonowego na wszystkich krawędziach, których liczba w grafie pełnym
-//        wynosi n·(n−1)
+//PodejĹ›cie wÄ™zĹ‚owe znacznie obniĹĽa koszt algorytmu. System nie musi pamiÄ™taÄ‡
+//        wartoĹ›ci Ĺ›ladu fermonowego na wszystkich krawÄ™dziach, ktĂłrych liczba w grafie peĹ‚nym
+//        wynosi nÂ·(nâ�’1)
 //        2
-//        , a jedynie na n węzłach.
+//        , a jedynie na n wÄ™zĹ‚ach.
 
 class przedmiot{
     String nazwa;
@@ -109,7 +109,8 @@ class mrowka {
                 break;
         }
     }
-
+ 
+    
 
 
 
