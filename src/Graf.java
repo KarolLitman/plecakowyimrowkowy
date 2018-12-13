@@ -1,5 +1,36 @@
 import java.util.*;
 
+//
+//Podejście węzłowe znacznie obniża koszt algorytmu. System nie musi pamiętać
+//        wartości śladu fermonowego na wszystkich krawędziach, których liczba w grafie pełnym
+//        wynosi n·(n−1)
+//        2
+//        , a jedynie na n węzłach.
+
+class przedmiot{
+    String nazwa;
+    double masa;
+    double cena;
+
+    przedmiot(String nazwa,double masa, double cena) {
+
+    this.nazwa=nazwa;
+    this.masa=masa;
+    this.cena=cena;
+    }
+
+    double oblicz_stosunek(){
+        return cena/masa;
+    }
+
+    }
+
+
+    class problem_plecakowy{
+        public List<przedmiot> lista_przedmiotow = new ArrayList<>();
+        double dopuszczalna_masa;
+
+    }
 
 class wierzcholek {
     String vertex_name;
@@ -34,36 +65,84 @@ class wierzcholek {
 
 class krawedz {
     wierzcholek vertex_start, vertex_end;
-    String predicate;
+    double koszt;
+    double ilosc_feromonu;
 
-    Map<String, String> any_key_value_Map;
-
-
-    krawedz(wierzcholek vertex_start, String predicate, wierzcholek vertex_end) {
+    krawedz(wierzcholek vertex_start, double koszt, wierzcholek vertex_end) {
         this.vertex_start = vertex_start;
-        this.predicate = predicate;
-        this.any_key_value_Map = new HashMap<>();
         this.vertex_end = vertex_end;
+        this.koszt = koszt;
     }
 
-    krawedz() {
-    }
 
-    @Override
-    public String toString() {
-        return vertex_start.vertex_name + " " + predicate + " " + vertex_end.vertex_name;
+    double wylicz_koszt(wierzcholek vertex_start,wierzcholek vertex_end){
+        return 0.0;
     }
 
 }
 
+
+class mrowka {
+
+
+    int Nmax; //liczba maksymalnych krokow jakie mrowka bedzie mogla wykonac
+
+//    double alfa;
+//    double beta;
+//    int N;
+
+    public List<wierzcholek> lista_tabu = new ArrayList<>();
+
+ 
+
+    void generuj_feromon(int sposob){
+//        https://www.ii.pwr.edu.pl/~kwasnicka/lindaabrichwww/description.html
+        switch (sposob) {
+            case 1:
+                System.out.println("gestosciowy");
+                break;
+            case 2:
+                System.out.println("ilosciowy");
+                break;
+            case 3:
+                System.out.println("cykliczny");
+                break;
+        }
+    }
+
+
+
+
+
+
+
+
+
+}
+
+
 public class Graf {
+
 
     public List<wierzcholek> lista_wierzcholkow = new ArrayList<>();
     public List<krawedz> lista_krawedzi = new ArrayList<>();
 
 
 
+    List<krawedz> utworz_krawedzie(List<wierzcholek> lista_wierzcholkow){
+        List<krawedz> lista_krawedzi = new ArrayList<>();
 
+        for (wierzcholek w_pocz: lista_wierzcholkow) {
+            for (wierzcholek w_konc: lista_wierzcholkow) {
+                if(w_pocz!=w_konc){
+                    lista_krawedzi.add(new krawedz(w_pocz,1.0,w_konc));
+                }
+            }
+        }
+
+
+        return lista_krawedzi;
+    }
 
 }
 
