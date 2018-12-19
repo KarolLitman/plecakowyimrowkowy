@@ -157,8 +157,7 @@ wierzcholek obecny;
         }
     }
 
-    public void setLocation(wierzcholek w)
-    {
+    public void setLocation(wierzcholek w) throws Exception {
         odwiedzone_wierzcholki.add(w);
 
 
@@ -171,7 +170,7 @@ wierzcholek obecny;
         }
         else
         {
-            throw new AcoException("KONTROLA");
+            throw new Exception("KONTROLA");
         }
         obecny = w;
     }
@@ -183,66 +182,71 @@ wierzcholek obecny;
 
     public wierzcholek selectNextNode()
     {
-        NodeList availableNodes = new NodeList() ;
+        Random random=new Random();
 
-        Profiler.StartEvent("Select available nodes");
+        List<wierzcholek> dostepne_wierzcholki = new ArrayList<>();
+
+
+//        NodeList availableNodes = new NodeList();
+
+//        Profiler.StartEvent("Select available nodes");
         //wybieramy dostepne wezly:
-        foreach (KnapsackItemNode node in allNodes)
+        for (wierzcholek w : wszystkie_wierzcholki)
         {
-            if (!visitedNodes.Contains(node))
+            if (!odwiedzone_wierzcholki.contains(w))
             {
-                if (node.Knapsack.IsEnoughPlaceFor(node.Item))
+                if (plecak.czy_wysarczajaco_miejsca(w.przedmiot))
                 {
-                    availableNodes.Add(node);
+                    dostepne_wierzcholki.add(w);
                 }
             }
         }
-        Profiler.FinishEvent("Select available nodes");
-        int count = availableNodes.Count;
+//        Profiler.FinishEvent("Select available nodes");
+        int count = dostepne_wierzcholki.size();
         double totalAtr = 0;
         double[] atrMap = new double[count];
 
-        if (random.NextDouble() > algorithm.Parameters.Q0)
+        if (random.nextDouble() > algorytm_mrowkowy.Q0)
         {
-            Profiler.StartEvent("Exploration");
-            KnapsackItemNode tmpNode = null;
+//            Profiler.StartEvent("Exploration");
+            wierzcholek tmpNode = null;
             for (int i = 0; i < count; i++)
             {
-                tmpNode = (KnapsackItemNode)availableNodes[i];
-                totalAtr += algorithm.CalculateAttractiveness(tmpNode);
+                tmpNode = dostepne_wierzcholki.get(i);
+                totalAtr += tmpNode.oblicz_atrakcyjnosc(tmpNode);
                 atrMap[i] = totalAtr;
             }
 
             ///losujemy wartoæ z mapy atrakcyjnosci
-            double rand = random.NextDouble() * totalAtr;
+            double rand = random.nextDouble() * totalAtr;
             for (int i = 0; i < count; i++)
             {
                 if (rand < atrMap[i])
                 {
-                    Profiler.FinishEvent("Exploration");
-                    return availableNodes[i];
+//                    Profiler.FinishEvent("Exploration");
+                    return dostepne_wierzcholki.get(i);
                 }
             }
-            Profiler.FinishEvent("Exploration");
+//            Profiler.FinishEvent("Exploration");
             return null;
         }
         else
         {
-            Profiler.StartEvent("Exploitation");
-            if (availableNodes.Count == 0)
+//            Profiler.StartEvent("Exploitation");
+            if (dostepne_wierzcholki.size() == 0)
                 return null;
-            KnapsackItemNode tmpNode = (KnapsackItemNode)availableNodes[0];
-            double tmp, tmpMax = double.MinValue;
-            foreach(KnapsackItemNode node in availableNodes)
+            wierzcholek tmpNode = dostepne_wierzcholki.get(0);
+            double tmp, tmpMax = Double.MIN_VALUE;
+            for(wierzcholek w : dostepne_wierzcholki)
             {
-                tmp = algorithm.CalculateAttractiveness(node);
+                tmp = w.oblicz_atrakcyjnosc(w);
                 if(tmp > tmpMax)
                 {
                     tmpMax = tmp;
-                    tmpNode = node;
+                    tmpNode = w;
                 }
             }
-            Profiler.FinishEvent("Exploitation");
+//            Profiler.FinishEvent("Exploitation");
             return tmpNode;
         }
     }
@@ -250,8 +254,7 @@ wierzcholek obecny;
 
 
 
-    public void run()
-    {
+    public void run() throws Exception {
         ///todo: wybieramy najbardziej obiecuj¹cy wezel, przechodzimy do niego, czynnosc powtarzamy dopóki beda dopuszczalne wezly
         wierzcholek w;
         while ((w = selectNextNode()) != null)
