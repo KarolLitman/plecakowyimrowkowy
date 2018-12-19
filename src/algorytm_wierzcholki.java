@@ -1,31 +1,34 @@
+import java.util.ArrayList;
+
 public class algorytm_wierzcholki {
 
 
-    void inicjalizuj()
-    {
+    ArrayList<wierzcholek> nodeList;
+
+    void inicjalizuj() throws Exception {
 
 
         /// Inicjalizacja Knapsack items
-        List<Przedmiot>  KnapsackItemList = mkp.KnapsackItemList;
-        if (KnapsackItemList.Count == 0)
+        ArrayList<przedmiot> KnapsackItemList = mkp.KnapsackItemList;
+        if (KnapsackItemList.size() == 0)
         {
-            throw new AcoException("Nie zdefiniowano ¿adnych przedmiotów");
+            throw new Exception("Nie zdefiniowano ¿adnych przedmiotów");
         }
 
 
         /// Inicjalizacja wêz³ów problemu
-        nodeList = new NodeList();
-        for (int i = 0; i < KnapsackList.Count; i++)
-        {
-            for (int j = 0; j < KnapsackItemList.Count; j++)
+        nodeList = new ArrayList<>();
+//        for (int i = 0; i < KnapsackList.Count; i++)
+//        {
+            for (int j = 0; j < KnapsackItemList.size(); j++)
             {
-                nodeList.Add(new KnapsackItemNode(KnapsackList[i], KnapsackItemList[j], parameters.InitialPheromoneValue));
+                nodeList.add(new wierzcholek(KnapsackList[i], KnapsackItemList[j], parameters.InitialPheromoneValue));
             }
-        }
+//        }
 
-        if (parameters.AntQuantity <= 0)
+        if (algorytm_mrowkowy.ilosc_mrowek <= 0)
         {
-            throw new AcoException("Nieprawid³owa liczba mrówek: "+parameters.AntQuantity.ToString());
+            throw new Exception("Nieprawid³owa liczba mrówek: "+algorytm_mrowkowy.ilosc_mrowek);
         }
 
         // Inicjalizacja mrówek
@@ -41,32 +44,32 @@ public class algorytm_wierzcholki {
     public CycleResult ExecuteCycle()
     {
         ///ustawiamy mrówki w losowo wybranych wêz³ach
-        double maxValue = double.MinValue;
-        double minValue = double.MaxValue;
+        double maxValue = Double.MIN_VALUE;
+        double minValue = Double.MAX_VALUE;
         double avgValue = 0;
         int cycyleCount = 0;
         double tmp;
 
         /// wykonujemy poni¿sze kroki dla ka¿dej mrówki:
-        foreach (MkpNodeAnt a in Ants)
+        for (mrowka a : Ants)
         {
             ///oprozniamy plecaki:
-            Profiler.StartEvent("CycleReset");
-            foreach (Knapsack k in mkp.KnapsackList)
+//            Profiler.StartEvent("CycleReset");
+            for(Knapsack k in mkp.KnapsackList)
             {
                 k.Clear();
             }
             ///resetujemy i ustawiamy mrówki:
             a.reset();
             a.setLocation(nodeList[random.Next(0, nodeList.Count - 1)]);
-            Profiler.FinishEvent("CycleReset");
+//            Profiler.FinishEvent("CycleReset");
 
-            Profiler.StartEvent("Ant run");
+//            Profiler.StartEvent("Ant run");
             ///wykonujemy ruch mrówki:
             a.run();
-            Profiler.FinishEvent("Ant run");
+//            Profiler.FinishEvent("Ant run");
 
-            Profiler.StartEvent("Pheromone update");
+//            Profiler.StartEvent("Pheromone update");
             tmp = a.evaluateGoalFunction();
 
             avgValue += tmp;
@@ -106,7 +109,7 @@ public class algorytm_wierzcholki {
     }
 
 
-    public void GlobalPheromoneUpdate(MkpNodeAnt ant)
+    public void GlobalPheromoneUpdate(mrowka ant)
     {
         double updateAmount;
         if (this.globalUpdateFactor > 0)
@@ -118,38 +121,40 @@ public class algorytm_wierzcholki {
             updateAmount = 0;
         }
 
-        foreach (KnapsackItemNode node in ant.VisitedNodes)
+        for (wierzcholek node : ant.odwiedzone_wierzcholki)
         {
-            node.Pheromone +=
-                    this.parameters.Alpha * updateAmount * node.InitialPheromone;
+            node.feromon +=
+                    algorytm_mrowkowy.Alpha * updateAmount * algorytm_mrowkowy.poczatkowy_feromon;
         }
     }
 
-    public void LocalPheromoneUpdate(MkpNodeAnt ant)
+    public void LocalPheromoneUpdate(mrowka ant)
     {
-        foreach (KnapsackItemNode node in ant.VisitedNodes)
+        for (wierzcholek node : ant.odwiedzone_wierzcholki)
         {
-            node.Pheromone = (1 - parameters.Rho) * (node.Pheromone) + parameters.Rho * node.InitialPheromone;
+
+//            tutaj nie wiem czy initial node nie powinien byc dla wierzcholka ponizej na samym koncu mnozenie
+            node.feromon = (1 - algorytm_mrowkowy.Rho) * (node.feromon) + algorytm_mrowkowy.Rho * algorytm_mrowkowy.poczatkowy_feromon;
         }
     }
 
-    public double CalculateAttractiveness(KnapsackItemNode node)
+    public double CalculateAttractiveness(wierzcholek node)
     {
-        return node.Pheromone * Math.Pow((node.Item.Value.value / node.Item.Size.getAverage()), parameters.Beta);
+        return node.feromon * Math.pow((node.przedmiot.cena / node.przedmiot.masa), algorytm_mrowkowy.Beta);
     }
 
-    public override void Reset()
+    public void Reset()
     {
         if (nodeList != null)
         {
-            foreach (KnapsackItemNode node in NodeList)
+            for (wierzcholek node : NodeList)
             {
-                node.Pheromone = node.InitialPheromone;
+                node.feromon = algorytm_mrowkowy.poczatkowy_feromon;
             }
         }
     }
 
-    public override string ToString()
+    public String ToString()
     {
         return "Mrówka wêz³owa";
     }
