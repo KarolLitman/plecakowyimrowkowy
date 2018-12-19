@@ -5,11 +5,18 @@ public class algorytm_wierzcholki {
 
     ArrayList<wierzcholek> nodeList;
 
+    public mrowka[] Ants;
+    public mrowka CycleBestAnt;
+    public problem_plecakowy mkp;
+
+    protected double globalUpdateFactor = 0;
+
+
     void inicjalizuj() throws Exception {
 
 
         /// Inicjalizacja Knapsack items
-        ArrayList<przedmiot> KnapsackItemList = mkp.KnapsackItemList;
+        ArrayList<przedmiot> KnapsackItemList = mkp.lista_przedmiotow;
         if (KnapsackItemList.size() == 0)
         {
             throw new Exception("Nie zdefiniowano ¿adnych przedmiotów");
@@ -22,7 +29,7 @@ public class algorytm_wierzcholki {
 //        {
             for (int j = 0; j < KnapsackItemList.size(); j++)
             {
-                nodeList.add(new wierzcholek(KnapsackList[i], KnapsackItemList[j], parameters.InitialPheromoneValue));
+                nodeList.add(new wierzcholek(KnapsackItemList.get(j)));
             }
 //        }
 
@@ -32,10 +39,10 @@ public class algorytm_wierzcholki {
         }
 
         // Inicjalizacja mrówek
-        Ants = new MkpNodeAnt[parameters.AntQuantity];
-        for (int i = 0; i < parameters.AntQuantity; i++)
+        Ants = new mrowka[algorytm_mrowkowy.ilosc_mrowek];
+        for (int i = 0; i < algorytm_mrowkowy.ilosc_mrowek; i++)
         {
-            Ants[i] = new MkpNodeAnt(nodeList, this);
+            Ants[i] = new mrowka(nodeList, this);
         }
     }
 
@@ -55,7 +62,7 @@ public class algorytm_wierzcholki {
         {
             ///oprozniamy plecaki:
 //            Profiler.StartEvent("CycleReset");
-            for(Knapsack k in mkp.KnapsackList)
+            for(Knapsack k : mkp.KnapsackList)
             {
                 k.Clear();
             }

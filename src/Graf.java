@@ -126,6 +126,9 @@ class mrowka {
 //    int N;
 
 
+    private boolean frozen = false;
+    private double evaluatedValue;
+
     mrowka(ArrayList<wierzcholek> wszystkie_wierzcholki){
         this.wszystkie_wierzcholki=wszystkie_wierzcholki;
         this.odwiedzone_wierzcholki=new ArrayList<>(wszystkie_wierzcholki);
@@ -252,6 +255,30 @@ wierzcholek obecny;
     }
 
 
+    public double evaluateGoalFunction()
+    {
+        return evaluate();
+    }
+
+
+    public double evaluate()
+    {
+        if (frozen)
+        {
+            return evaluatedValue;
+        }
+        double value = 0;
+//        for (Knapsack knapsack : knapsacks)
+//        {
+            for(przedmiot item : plecak.lista_przedmiotow)
+            {
+                value += item.cena;
+            }
+//        }
+        return value;
+    }
+
+
 
 
     public void run() throws Exception {
@@ -265,6 +292,9 @@ wierzcholek obecny;
         //tu trzeba obliczyc wartosc wszystkich przedmiotow
         solution.freeze(algorithm.mkp.KnapsackList);
     }
+
+
+
 
 
 }
