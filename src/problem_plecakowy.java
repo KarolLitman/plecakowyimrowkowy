@@ -4,6 +4,9 @@ import java.util.List;
 class problem_plecakowy{
 
 
+    public String toString(){
+        return lista_przedmiotow+"";
+    }
 
 void dodaj_przedmiot(String nazwa, double masa, double cena){
     lista_przedmiotow.add(new przedmiot(nazwa, masa, cena));
@@ -40,7 +43,7 @@ void dodaj_przedmiot(przedmiot p){
 
     double dopuszczalna_masa;
 
-    double pozostala_masa;
+    double pozostala_masa=100000;
 
 
 

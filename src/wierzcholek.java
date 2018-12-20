@@ -5,12 +5,10 @@ class wierzcholek {
 
     wierzcholek(przedmiot p) {
         this.przedmiot=p;
-        this.feromon=algorytm_mrowkowy.poczatkowy_feromon;
+        this.feromon= algorytm_mrowkowy.poczatkowy_feromon;
         this.czy_odwiedzony=false;
 
     }
-
-
 
     public double oblicz_atrakcyjnosc(wierzcholek w)
     {

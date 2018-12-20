@@ -5,19 +5,16 @@ import java.util.Random;
 class mrowka {
 
 
-    int Nmax; //liczba maksymalnych krokow jakie mrowka bedzie mogla wykonac
-
-//    double alfa;
-//    double beta;
-//    int N;
+//    int Nmax; //liczba maksymalnych krokow jakie mrowka bedzie mogla wykonac
 
 
     private boolean frozen = false;
     private double evaluatedValue;
 
-    mrowka(ArrayList<wierzcholek> wszystkie_wierzcholki){
+    mrowka(ArrayList<wierzcholek> wszystkie_wierzcholki,problem_plecakowy plecak){
         this.wszystkie_wierzcholki=wszystkie_wierzcholki;
         this.odwiedzone_wierzcholki=new ArrayList<>(wszystkie_wierzcholki);
+        this.plecak=plecak;
     }
 
 
@@ -46,20 +43,18 @@ wierzcholek obecny;
         }
     }
 
-    public void setLocation(wierzcholek w) throws Exception {
+    public void odwiedz_wierzcholek(wierzcholek w) throws Exception {
         odwiedzone_wierzcholki.add(w);
-
 
 
 
         if (plecak.czy_wysarczajaco_miejsca(w.przedmiot))
         {
             plecak.dodaj_przedmiot(w.przedmiot);
-//            kiNode.Knapsack.Add(kiNode.Item);
         }
         else
         {
-            throw new Exception("KONTROLA");
+            throw new Exception("Brak miejca w plecaku");
         }
         obecny = w;
     }
@@ -68,18 +63,14 @@ wierzcholek obecny;
 
 
 
-
-    public wierzcholek selectNextNode()
+    public wierzcholek wybierz_nastepny_wierzcholek()
     {
         Random random=new Random();
 
         List<wierzcholek> dostepne_wierzcholki = new ArrayList<>();
 
 
-//        NodeList availableNodes = new NodeList();
 
-//        Profiler.StartEvent("Select available nodes");
-        //wybieramy dostepne wezly:
         for (wierzcholek w : wszystkie_wierzcholki)
         {
             if (!odwiedzone_wierzcholki.contains(w))
@@ -90,14 +81,16 @@ wierzcholek obecny;
                 }
             }
         }
-//        Profiler.FinishEvent("Select available nodes");
-        int count = dostepne_wierzcholki.size();
-        double totalAtr = 0;
-        double[] atrMap = new double[count];
+
 
         if (random.nextDouble() > algorytm_mrowkowy.Q0)
         {
-//            Profiler.StartEvent("Exploration");
+
+            int count = dostepne_wierzcholki.size();
+            double totalAtr = 0;
+            double[] atrMap = new double[count];
+
+
             wierzcholek tmpNode = null;
             for (int i = 0; i < count; i++)
             {
@@ -106,22 +99,18 @@ wierzcholek obecny;
                 atrMap[i] = totalAtr;
             }
 
-            ///losujemy wartoæ z mapy atrakcyjnosci
             double rand = random.nextDouble() * totalAtr;
             for (int i = 0; i < count; i++)
             {
                 if (rand < atrMap[i])
                 {
-//                    Profiler.FinishEvent("Exploration");
                     return dostepne_wierzcholki.get(i);
                 }
             }
-//            Profiler.FinishEvent("Exploration");
             return null;
         }
         else
         {
-//            Profiler.StartEvent("Exploitation");
             if (dostepne_wierzcholki.size() == 0)
                 return null;
             wierzcholek tmpNode = dostepne_wierzcholki.get(0);
@@ -135,32 +124,27 @@ wierzcholek obecny;
                     tmpNode = w;
                 }
             }
-//            Profiler.FinishEvent("Exploitation");
             return tmpNode;
         }
     }
 
 
-    public double evaluateGoalFunction()
-    {
-        return evaluate();
-    }
 
 
-    public double evaluate()
+    public double rozwiazanie()
     {
         if (frozen)
         {
             return evaluatedValue;
         }
         double value = 0;
-//        for (Knapsack knapsack : knapsacks)
-//        {
-            for(przedmiot item : plecak.lista_przedmiotow)
+
+
+            for(przedmiot p : plecak.lista_przedmiotow)
             {
-                value += item.cena;
+                value += p.cena;
             }
-//        }
+
         return value;
     }
 
@@ -168,15 +152,19 @@ wierzcholek obecny;
 
 
     public void run() throws Exception {
-        ///todo: wybieramy najbardziej obiecuj¹cy wezel, przechodzimy do niego, czynnosc powtarzamy dopóki beda dopuszczalne wezly
         wierzcholek w;
-        while ((w = selectNextNode()) != null)
+        while ((w = wybierz_nastepny_wierzcholek()) != null)
         {
-            this.setLocation(w);
+            this.odwiedz_wierzcholek(w);
         }
 
-        //tu trzeba obliczyc wartosc wszystkich przedmiotow
-        solution.freeze(algorithm.mkp.KnapsackList);
+        System.out.println(rozwiazanie());
+        System.out.println(plecak);
+    }
+
+    public void reset()
+    {
+//        odwiedzone_wierzcholki.clear();
     }
 
 
