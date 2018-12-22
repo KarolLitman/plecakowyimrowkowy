@@ -6,11 +6,11 @@ public class algorytm_mrowkowy {
 
 
     static public double poczatkowy_feromon = 0.01;
-    static public double Rho = 0.35;
-    static public double Beta = 5;
-    static public double Alpha = 2;
+    static public double Rho = 0.10;
+    static public double Beta = 1;
+    static public double Alpha = 1;
     static public double Q0 = 0.5;
-    static public int ilosc_mrowek = 10;
+    static public int ilosc_mrowek = 500;
     
     
     
@@ -25,7 +25,7 @@ public class algorytm_mrowkowy {
 
         this.pp=pp;
 
-        List<przedmiot> lista_przedmitow = pp.lista_przedmiotow;
+        List<przedmiot> lista_przedmitow = pp.wszystkie_przedmioty;
         lista_wierzcholkow = new ArrayList<>();
 
 
@@ -37,7 +37,7 @@ public class algorytm_mrowkowy {
         mrowki = new mrowka[algorytm_mrowkowy.ilosc_mrowek];
         for (int i = 0; i < algorytm_mrowkowy.ilosc_mrowek; i++)
         {
-            mrowki[i] = new mrowka(lista_wierzcholkow,pp);
+            mrowki[i] = new mrowka(lista_wierzcholkow);
         }
 
 
@@ -52,7 +52,6 @@ public class algorytm_mrowkowy {
         double maksymalna_wartosc = Double.MIN_VALUE;
         double minimalna_wartosc = Double.MAX_VALUE;
         double srednia_wartosc = 0;
-        int cycyleCount = 0;
         double tmp;
 
         Random r=new Random();
@@ -60,12 +59,11 @@ public class algorytm_mrowkowy {
         for (mrowka m : mrowki)
         {
 
-//            for(Knapsack k : pp.KnapsackList)
-//            {
-//                k.Clear();
-//            }
+
             m.reset();
             m.odwiedz_wierzcholek(lista_wierzcholkow.get(r.nextInt(lista_wierzcholkow.size())));
+
+//            System.out.println("Pierwszy wylosowany wierzcholek "+m.odwiedzone_wierzcholki);
 
             m.run();
 
@@ -93,33 +91,26 @@ public class algorytm_mrowkowy {
         globalny_feromon(najlepsza_mrowka);
 
 
-//        CycleResult result = new CycleResult();
-//        result.BestSolution = najlepsza_mrowka.getSolution();
-//        result.Number = ++CycleCount;
-//        result.max = maxValue;
-//        result.min = minValue;
-//        result.avg = avgValue;
-//
-//        return result;
+
     }
  
 
     public void globalny_feromon(mrowka m)
     {
-        double updateAmount; 
+        double wartosc; 
         if (this.najlepsza_sciezka > 0)
         {
-            updateAmount = m.rozwiazanie() / this.najlepsza_sciezka;
+            wartosc = m.rozwiazanie() / this.najlepsza_sciezka;
         }
         else
         {
-            updateAmount = 0;
+            wartosc = 0;
         }
 
         for (wierzcholek w : m.odwiedzone_wierzcholki)
         {
             w.feromon +=
-                    algorytm_mrowkowy.Alpha * updateAmount * algorytm_mrowkowy.poczatkowy_feromon;
+                    algorytm_mrowkowy.Alpha * wartosc * algorytm_mrowkowy.poczatkowy_feromon;
         }
     }
 

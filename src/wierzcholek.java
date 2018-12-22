@@ -10,6 +10,12 @@ class wierzcholek {
 
     }
 
+
+    public String toString(){
+        return przedmiot.nazwa+"";
+    }
+
+
     public double oblicz_atrakcyjnosc(wierzcholek w)
     {
         return w.feromon * Math.pow((w.przedmiot.cena/w.przedmiot.masa), algorytm_mrowkowy.Beta);

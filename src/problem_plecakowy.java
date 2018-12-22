@@ -4,23 +4,23 @@ import java.util.List;
 class problem_plecakowy{
 
 
+
+    public List<przedmiot> wszystkie_przedmioty = new ArrayList<>();
+    public List<przedmiot> przedmioty_w_plecaku = new ArrayList<>();
+
+
+
     public String toString(){
-        return lista_przedmiotow+"";
+        return przedmioty_w_plecaku+"";
     }
 
 void dodaj_przedmiot(String nazwa, double masa, double cena){
-    lista_przedmiotow.add(new przedmiot(nazwa, masa, cena));
+    przedmioty_w_plecaku.add(new przedmiot(nazwa, masa, cena));
 }
 
 void dodaj_przedmiot(przedmiot p){
-    lista_przedmiotow.add(p);
+    przedmioty_w_plecaku.add(p);
 }
-
-
-    public List<przedmiot> lista_przedmiotow = new ArrayList<>();
-
-
-
 
 
 
@@ -28,22 +28,21 @@ void dodaj_przedmiot(przedmiot p){
     public Double policz_wartosc_plecaka()
     {
         Double tmp=0.0;
-        for(przedmiot p : lista_przedmiotow)
+        for(przedmiot p : przedmioty_w_plecaku)
         {
             tmp = tmp + p.cena;
         }
         return tmp;
     }
 
-    public boolean czy_wysarczajaco_miejsca(przedmiot p)
+    public boolean czy_wystarczajaco_miejsca(przedmiot p)
     {
         return pozostala_masa >= p.masa;
     }
 
 
-    double dopuszczalna_masa;
 
-    double pozostala_masa=100000;
+    double pozostala_masa=50;
 
 
 

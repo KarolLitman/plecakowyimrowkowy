@@ -8,21 +8,21 @@ class mrowka {
 //    int Nmax; //liczba maksymalnych krokow jakie mrowka bedzie mogla wykonac
 
 
-    private boolean frozen = false;
-    private double evaluatedValue;
+    public ArrayList<wierzcholek> odwiedzone_wierzcholki;
+    public ArrayList<wierzcholek> wszystkie_wierzcholki;
+    wierzcholek obecny;
+    problem_plecakowy plecak;
 
-    mrowka(ArrayList<wierzcholek> wszystkie_wierzcholki,problem_plecakowy plecak){
+
+    mrowka(ArrayList<wierzcholek> wszystkie_wierzcholki){
         this.wszystkie_wierzcholki=wszystkie_wierzcholki;
-        this.odwiedzone_wierzcholki=new ArrayList<>(wszystkie_wierzcholki);
-        this.plecak=plecak;
+        this.odwiedzone_wierzcholki=new ArrayList<>();
+//        this.plecak=plecak;
+        this.plecak=new problem_plecakowy();
     }
 
 
 
-    public ArrayList<wierzcholek> odwiedzone_wierzcholki;
-    public ArrayList<wierzcholek> wszystkie_wierzcholki;
-wierzcholek obecny;
-    problem_plecakowy plecak;
 
 
 
@@ -47,14 +47,19 @@ wierzcholek obecny;
         odwiedzone_wierzcholki.add(w);
 
 
-
-        if (plecak.czy_wysarczajaco_miejsca(w.przedmiot))
+        if (plecak.czy_wystarczajaco_miejsca(w.przedmiot)) //sprawdzenie bo pierwszy wierzcholek jest losowany...
         {
+//            System.out.println("przed odwiedzeniem "+plecak.pozostala_masa);
+            plecak.pozostala_masa-=w.przedmiot.masa;
             plecak.dodaj_przedmiot(w.przedmiot);
+//            System.out.println("po odwiedzeniu "+plecak.pozostala_masa);
+
         }
         else
         {
-            throw new Exception("Brak miejca w plecaku");
+//            System.out.println("czemu");
+
+//            throw new Exception("Brak miejca w plecaku");
         }
         obecny = w;
     }
@@ -69,14 +74,18 @@ wierzcholek obecny;
 
         List<wierzcholek> dostepne_wierzcholki = new ArrayList<>();
 
-
+//        System.out.println("wejscie do funkcji wybierz");
 
         for (wierzcholek w : wszystkie_wierzcholki)
         {
+
             if (!odwiedzone_wierzcholki.contains(w))
             {
-                if (plecak.czy_wysarczajaco_miejsca(w.przedmiot))
+                if (plecak.czy_wystarczajaco_miejsca(w.przedmiot))
                 {
+//                    System.out.println("poz masa"+plecak.pozostala_masa);
+//                    System.out.println("czy_wyst "+w.przedmiot.masa);
+
                     dostepne_wierzcholki.add(w);
                 }
             }
@@ -133,14 +142,11 @@ wierzcholek obecny;
 
     public double rozwiazanie()
     {
-        if (frozen)
-        {
-            return evaluatedValue;
-        }
+
         double value = 0;
 
 
-            for(przedmiot p : plecak.lista_przedmiotow)
+            for(przedmiot p : plecak.przedmioty_w_plecaku)
             {
                 value += p.cena;
             }
@@ -155,16 +161,20 @@ wierzcholek obecny;
         wierzcholek w;
         while ((w = wybierz_nastepny_wierzcholek()) != null)
         {
+//            System.out.println("Nastepne "+w);
             this.odwiedz_wierzcholek(w);
         }
 
+        System.out.println(plecak.przedmioty_w_plecaku);
+//        System.out.println(plecak.wszystkie_przedmioty);
         System.out.println(rozwiazanie());
-        System.out.println(plecak);
+
+//        System.out.println(plecak);
     }
 
     public void reset()
     {
-//        odwiedzone_wierzcholki.clear();
+//       odwiedzone_wierzcholki.clear();
     }
 
 
